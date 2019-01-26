@@ -44,15 +44,12 @@ public class CalculatePrice {
     private static final double MIN_TREND_RATE_PER_DAY = -0.000274;
 
     public CalculatePrice(Transaction transaction, List<Transaction> filteredList) {
-        super();
         this.userTransaction = transaction;
         this.filteredList = filteredList;
     }
 
-    private List<Transaction> updatePricesInList() {
+    public List<Transaction> updatePricesInList() {
         List<Transaction> transactions = filteredList;
-
-        BigDecimal min = getMinimumPriceInList(transactions);
 
         List<Transaction> listToCalculateTrend = getListToCalculateTrend(transactions);
 
@@ -67,7 +64,7 @@ public class CalculatePrice {
         return exportList;
     }
 
-    private List<Transaction> getListToCalculateTrend(List<Transaction> transactions) {
+    public List<Transaction> getListToCalculateTrend(List<Transaction> transactions) {
         String mostPopularParkingSpot = mapOfParkingSpots(transactions).entrySet().stream()
                 .max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
                 .get()
@@ -231,7 +228,6 @@ public class CalculatePrice {
         BigDecimal averageFlatArea = BigDecimal.valueOf(finallySortedList.stream()
                 .mapToDouble(t -> t.getFlatArea().doubleValue())
                 .average().orElse((double) 0));
-        System.out.println("Średnia wielkość mieszkań dla dobranego zbioru to:"+getTabs(2) + averageFlatArea.setScale(2, RoundingMode.HALF_UP) + " m2");
         return transToCheck.getFlatArea().compareTo(averageFlatArea) < 0;
     }
 
