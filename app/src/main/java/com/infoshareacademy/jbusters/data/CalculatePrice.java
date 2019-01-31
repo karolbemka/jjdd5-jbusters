@@ -101,7 +101,7 @@ public class CalculatePrice {
         return transaction.getPricePerM2().multiply(BigDecimal.ONE.add(BigDecimal.valueOf(duration).multiply(trend))).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal trendPerDay(List<Transaction> listToCalculateTrend, int first, int last) {
+    public BigDecimal trendPerDay(List<Transaction> listToCalculateTrend, int first, int last) {
         long duration = DAYS.between(listToCalculateTrend.get(first).getTransactionDate(), listToCalculateTrend.get(last).getTransactionDate());
         if (duration < 1) {
             duration = 1;
@@ -248,7 +248,7 @@ public class CalculatePrice {
         return ParkingPlace.fromString(transToCheck.getParkingSpot()).compareTo(bestParking) >= 0;
     }
 
-    private String getTabs(int numberOfTabs){
+    public String getTabs(int numberOfTabs){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numberOfTabs; i++) {
             sb.append("\t");

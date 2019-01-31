@@ -17,6 +17,8 @@ import static org.mockito.Mockito.*;
 class CalculatePriceTest {
 
     private static final double TREND_PER_YEAR = 0.002;
+    private static final double MAX_TREND_RATE_PER_DAY = 0.000274;
+    private static final double MIN_TREND_RATE_PER_DAY = -0.000274;
     private CalculatePrice testObj = new CalculatePrice();
 
     // updatePrice
@@ -462,5 +464,75 @@ class CalculatePriceTest {
         // then
 
         assertThat(result).isFalse();
+    }
+
+    // getTabs
+
+    @Test
+    public void getTabsTest() {
+
+        // given
+
+        int i0 = 0;
+        int i1 = 1;
+        int i3 = 3;
+
+        // when
+
+        String result1 = testObj.getTabs(i0);
+        String result2 = testObj.getTabs(i1);
+        String result3 = testObj.getTabs(i3);
+
+        // then
+        assertThat(result1).isEqualTo("");
+        assertThat(result2).isEqualTo("\t");
+        assertThat(result3).isEqualTo("\t\t\t");
+    }
+
+    // trendPerDay
+
+    @Test
+    public void trendPerDay() {
+
+        // given
+
+        LocalDate date = LocalDate.of(2018, 6, 1);
+
+        List<Transaction> transactions = new ArrayList<>();
+        Transaction transOne = new Transaction();
+        transOne.setTransactionDate(date);
+        transOne.setPricePerM2(BigDecimal.valueOf(5000));
+
+        Transaction transTwo = new Transaction();
+        transTwo.setTransactionDate(date.plusDays(365));
+        transTwo.setPricePerM2(BigDecimal.valueOf(5250));
+
+        Transaction transThree = new Transaction();
+        transThree.setTransactionDate(date.plusDays(365));
+        transThree.setPricePerM2(BigDecimal.valueOf(6000));
+
+        Transaction transFour = new Transaction();
+        transFour.setTransactionDate(date.plusDays(365));
+        transFour.setPricePerM2(BigDecimal.valueOf(4000));
+
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+
+        BigDecimal resultOne = testObj.trendPerDay(transactions, 0, 1);
+        BigDecimal resultTwo = testObj.trendPerDay(transactions, 0, 2);
+        BigDecimal resultThree = testObj.trendPerDay(transactions, 0, 3);
+        BigDecimal resultFour = testObj.trendPerDay(transactions, 0, 0);
+
+        // then
+
+        assertThat(resultOne).isEqualTo(BigDecimal.valueOf(0.000136986).setScale(6, RoundingMode.HALF_UP));
+        assertThat(resultTwo).isEqualTo(BigDecimal.valueOf(MAX_TREND_RATE_PER_DAY));
+        assertThat(resultThree).isEqualTo(BigDecimal.valueOf(MIN_TREND_RATE_PER_DAY));
+        assertThat(resultFour).isEqualTo(BigDecimal.valueOf(0.000000).setScale(6, RoundingMode.HALF_UP));
     }
 }
