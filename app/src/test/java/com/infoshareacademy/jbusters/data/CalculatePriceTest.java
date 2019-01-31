@@ -16,8 +16,10 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 class CalculatePriceTest {
 
-    private static final double TREND_PER_YEAR_2 = 0.002;
+    private static final double TREND_PER_YEAR = 0.002;
+    private CalculatePrice testObj = new CalculatePrice();
 
+    // updatePrice
 
     @Test
     public void shouldReturnSamePrice_whenOverallTrendIs_0() {
@@ -62,7 +64,7 @@ class CalculatePriceTest {
 
         doReturn(transactions).when(test).getListToCalculateTrend(transactions);
 
-        doReturn(BigDecimal.valueOf(TREND_PER_YEAR_2)).when(test).overallTrend(transactions);
+        doReturn(BigDecimal.valueOf(TREND_PER_YEAR)).when(test).overallTrend(transactions);
 
         // when
         List<Transaction> result = test.updatePricesInList();
@@ -70,4 +72,150 @@ class CalculatePriceTest {
         //then
         assertThat(result.get(0).getPricePerM2()).isEqualTo(BigDecimal.valueOf(9515.00).setScale(2, RoundingMode.HALF_UP));
     }
+
+    // getMaxPriceInList
+
+    @Test
+    public void maxPrice_shouldReturnMaxPriceInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction lowerPriceT = new Transaction();
+        Transaction midPriceT = new Transaction();
+        Transaction higherPriceT = new Transaction();
+        lowerPriceT.setPricePerM2(BigDecimal.valueOf(2000));
+        midPriceT.setPricePerM2(BigDecimal.valueOf(4000));
+        higherPriceT.setPricePerM2(BigDecimal.valueOf(6000));
+
+        transactions.add(lowerPriceT);
+        transactions.add(midPriceT);
+        transactions.add(higherPriceT);
+
+        // when
+
+        BigDecimal result = testObj.getMaxPriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(6000.0));
+    }
+
+    @Test
+    public void maxPrice_shouldReturnZeroWhenListIsEmpty() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        // when
+
+        BigDecimal result = testObj.getMaxPriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(0.0));
+    }
+
+    // getMinimumPriceInList
+
+    @Test
+    public void minPrice_shouldReturnMinPriceInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction lowerPriceT = new Transaction();
+        Transaction midPriceT = new Transaction();
+        Transaction higherPriceT = new Transaction();
+        lowerPriceT.setPricePerM2(BigDecimal.valueOf(2000));
+        midPriceT.setPricePerM2(BigDecimal.valueOf(4000));
+        higherPriceT.setPricePerM2(BigDecimal.valueOf(6000));
+
+        transactions.add(lowerPriceT);
+        transactions.add(midPriceT);
+        transactions.add(higherPriceT);
+
+        // when
+
+        BigDecimal result = testObj.getMinimumPriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(2000.0));
+    }
+
+    @Test
+    public void minPrice_shouldReturnZeroWhenListIsEmpty() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        // when
+
+        BigDecimal result = testObj.getMinimumPriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(0.0));
+    }
+
+    // getAvaragePriceInList
+
+    @Test
+    public void averagePrice_shouldReturnAveragePriceInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction lowerPriceT = new Transaction();
+        Transaction midPriceT = new Transaction();
+        Transaction higherPriceT = new Transaction();
+        lowerPriceT.setPricePerM2(BigDecimal.valueOf(2000));
+        midPriceT.setPricePerM2(BigDecimal.valueOf(4000));
+        higherPriceT.setPricePerM2(BigDecimal.valueOf(6000));
+
+        transactions.add(lowerPriceT);
+        transactions.add(midPriceT);
+        transactions.add(higherPriceT);
+
+        // when
+
+        BigDecimal result = testObj.getAvaragePriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(4000.0));
+    }
+
+    @Test
+    public void averagePrice_shouldReturnZeroWhenListIsEmpty() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        // when
+
+        BigDecimal result = testObj.getAvaragePriceInList(transactions);
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(0.0));
+    }
+
+    // isBestLevel
+
+    @Test
+    public void isBestLevel_shouldReturnTrueWhen_levelIs_2() {
+
+        // given
+
+
+    }
+
 }
