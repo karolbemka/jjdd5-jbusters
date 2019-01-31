@@ -220,20 +220,19 @@ public class CalculatePrice {
                 .average().orElse((double) 0));
     }
 
-    private boolean isBestLevel(Transaction transToCheck) {
+    public boolean isBestLevel(Transaction transToCheck) {
         return transToCheck.getLevel() > 1;
     }
 
-    private boolean isBestFlatArea(List<Transaction> finallySortedList, Transaction transToCheck) {
+    public boolean isBestFlatArea(List<Transaction> finallySortedList, Transaction transToCheck) {
         BigDecimal averageFlatArea = BigDecimal.valueOf(finallySortedList.stream()
                 .mapToDouble(t -> t.getFlatArea().doubleValue())
                 .average().orElse((double) 0));
         return transToCheck.getFlatArea().compareTo(averageFlatArea) < 0;
     }
 
-    private boolean isBestStandardLevel(List<Transaction> finallySortedList, Transaction transToCheck) {
+    public boolean isBestStandardLevel(List<Transaction> finallySortedList, Transaction transToCheck) {
         StandardLevel bestStandard = finallySortedList.stream()
-                .limit(finallySortedList.size() - 1)
                 .map(x -> StandardLevel.fromString(x.getStandardLevel()))
                 .distinct().max(new StandardLevelComparator())
                 .orElse(StandardLevel.WYSOKI);

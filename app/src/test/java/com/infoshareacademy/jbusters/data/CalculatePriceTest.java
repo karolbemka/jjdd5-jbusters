@@ -215,7 +215,172 @@ class CalculatePriceTest {
 
         // given
 
+        Transaction transToCheck = new Transaction();
+        transToCheck.setLevel(2);
 
+        // when
+
+        boolean result = testObj.isBestLevel(transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
     }
 
+    @Test
+    public void isBestLevel_shouldReturnFalseWhen_levelIs_1() {
+
+        // given
+
+        Transaction transToCheck = new Transaction();
+        transToCheck.setLevel(1);
+
+        // when
+
+        boolean result = testObj.isBestLevel(transToCheck);
+
+        // then
+
+        assertThat(result).isFalse();
+    }
+
+    // isBestFlatArea
+
+    @Test
+    public void isBestFlatArea_shouldReturnFalseWhen_FlatAreaIsAboveAverage() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction lowerPriceT = new Transaction();
+        Transaction midPriceT = new Transaction();
+        Transaction higherPriceT = new Transaction();
+        Transaction transToCheck = new Transaction();
+        lowerPriceT.setFlatArea(BigDecimal.valueOf(30));
+        midPriceT.setFlatArea(BigDecimal.valueOf(50));
+        higherPriceT.setFlatArea(BigDecimal.valueOf(70));
+        transToCheck.setFlatArea(BigDecimal.valueOf(51));
+
+        transactions.add(lowerPriceT);
+        transactions.add(midPriceT);
+        transactions.add(higherPriceT);
+
+        // when
+
+        boolean result = testObj.isBestFlatArea(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    public void isBestFlatArea_shouldReturnTrueWhen_FlatAreaIsBelowAverage() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction lowerPriceT = new Transaction();
+        Transaction midPriceT = new Transaction();
+        Transaction higherPriceT = new Transaction();
+        Transaction transToCheck = new Transaction();
+        lowerPriceT.setFlatArea(BigDecimal.valueOf(30));
+        midPriceT.setFlatArea(BigDecimal.valueOf(50));
+        higherPriceT.setFlatArea(BigDecimal.valueOf(70));
+        transToCheck.setFlatArea(BigDecimal.valueOf(49));
+
+        transactions.add(lowerPriceT);
+        transactions.add(midPriceT);
+        transactions.add(higherPriceT);
+
+        // when
+
+        boolean result = testObj.isBestFlatArea(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    // isBestStandardLevel
+
+    @Test
+    public void isBestStandardLevel_shouldReturnTrueWhen_standardLevelIsBetterThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction niskiStandard = new Transaction();
+        Transaction dobryStandard = new Transaction();
+        Transaction transToCheck = new Transaction();
+        niskiStandard.setStandardLevel(StandardLevel.NISKI.getName());
+        dobryStandard.setStandardLevel(StandardLevel.DOBRY.getName());
+        transToCheck.setStandardLevel(StandardLevel.BARDZO_DOBRY.getName());
+
+        transactions.add(niskiStandard);
+        transactions.add(dobryStandard);
+
+        // when
+
+        boolean result = testObj.isBestStandardLevel(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestStandardLevel_shouldReturnTrueWhen_standardLevelIsSameAsBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction niskiStandard = new Transaction();
+        Transaction dobryStandard = new Transaction();
+        Transaction transToCheck = new Transaction();
+        niskiStandard.setStandardLevel(StandardLevel.NISKI.getName());
+        dobryStandard.setStandardLevel(StandardLevel.DOBRY.getName());
+        transToCheck.setStandardLevel(StandardLevel.DOBRY.getName());
+
+        transactions.add(niskiStandard);
+        transactions.add(dobryStandard);
+
+        // when
+
+        boolean result = testObj.isBestStandardLevel(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestStandardLevel_shouldReturnFalseWhen_standardLevelIsWorseThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction niskiStandard = new Transaction();
+        Transaction dobryStandard = new Transaction();
+        Transaction transToCheck = new Transaction();
+        niskiStandard.setStandardLevel(StandardLevel.NISKI.getName());
+        dobryStandard.setStandardLevel(StandardLevel.DOBRY.getName());
+        transToCheck.setStandardLevel(StandardLevel.PRZECIETNY.getName());
+
+        transactions.add(niskiStandard);
+        transactions.add(dobryStandard);
+
+        // when
+
+        boolean result = testObj.isBestStandardLevel(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isFalse();
+    }
 }
