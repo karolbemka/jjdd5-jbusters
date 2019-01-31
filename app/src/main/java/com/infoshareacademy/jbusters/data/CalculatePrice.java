@@ -239,9 +239,8 @@ public class CalculatePrice {
         return StandardLevel.fromString(transToCheck.getStandardLevel()).compareTo(bestStandard) >= 0;
     }
 
-    private boolean isBestParkingPlace(List<Transaction> finallySortedList, Transaction transToCheck) {
+    public boolean isBestParkingPlace(List<Transaction> finallySortedList, Transaction transToCheck) {
         ParkingPlace bestParking = finallySortedList.stream()
-                .limit(finallySortedList.size() - 1)
                 .map(x -> ParkingPlace.fromString(x.getParkingSpot()))
                 .distinct()
                 .max(new ParkingPlaceComparator())

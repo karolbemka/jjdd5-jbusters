@@ -383,4 +383,84 @@ class CalculatePriceTest {
 
         assertThat(result).isFalse();
     }
+
+    // isBestParkingPlace
+
+    @Test
+    public void isBestParkingPlace_shouldReturnTrueWhen_parkingPlaceIsBetterThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.GARAZ.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestParkingPlace_shouldReturnTrueWhen_parkingPlaceIsSameAsBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestParkingPlace_shouldReturnFalseWhen_parkingPlaceIsWorseThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.MIEJSCE_NAZIEMNE.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isFalse();
+    }
 }
