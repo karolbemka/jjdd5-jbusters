@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -600,5 +601,74 @@ class CalculatePriceTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result).contains(entry("DOBRY", 3L), entry("PRZECIĘTNY", 1L));
+    }
+
+    // getListToCalculateTrend
+
+    @Test
+    public void getListToCalculateTrend() {
+        // given
+        List<Transaction> transactions = new ArrayList<>();
+
+        LocalDate date = LocalDate.of(2018, 6, 1);
+
+
+        Transaction transOne = new Transaction();
+        transOne.setStandardLevel(StandardLevel.DOBRY.getName());
+        transOne.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transOne.setLevel(2);
+        transOne.setTransactionDate(date);
+        Transaction transTwo = new Transaction();
+        transTwo.setStandardLevel(StandardLevel.DOBRY.getName());
+        transTwo.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transTwo.setLevel(2);
+        transTwo.setTransactionDate(date);
+        Transaction transThree = new Transaction();
+        transThree.setStandardLevel(StandardLevel.DOBRY.getName());
+        transThree.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transThree.setLevel(1);
+        transThree.setTransactionDate(date);
+        Transaction transFour = new Transaction();
+        transFour.setStandardLevel(StandardLevel.PRZECIETNY.getName());
+        transFour.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transFour.setLevel(3);
+        transFour.setTransactionDate(date);
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+        List<Transaction> result = testObj.getListToCalculateTrend(transactions);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).containsOnly(transOne, transTwo);
+    }
+
+    // overallTrend
+
+    @Test
+    public void overallTrend() {
+        // given
+        CalculatePrice test = Mockito.spy(new CalculatePrice());
+
+        BigDecimal trendOne = BigDecimal.valueOf(0.4);
+        BigDecimal trendTwo = BigDecimal.valueOf(0.6);
+        BigDecimal trendThree = BigDecimal.valueOf(0.2);
+
+        doReturn(new ArrayList<Transaction>()).when(test).getListToCalculateTrend(anyListOf(Transaction.class));
+        doReturn(trendOne).when(test).trendPerDay(anyListOf(Transaction.class),eq(0) , anyInt());
+        doReturn(trendTwo).when(test).trendPerDay(anyListOf(Transaction.class), eq(1), anyInt());
+        doReturn(trendThree).when(test).trendPerDay(anyListOf(Transaction.class), eq(2), anyInt());
+
+        // when
+
+        BigDecimal result = test.overallTrend(anyListOf(Transaction.class));
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(0.4).setScale(6, RoundingMode.HALF_UP));
     }
 }
