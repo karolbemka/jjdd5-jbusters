@@ -83,13 +83,13 @@ public class CalculatePrice {
                 .collect(Collectors.toList());
     }
 
-    private Map<String, Long> mapOfParkingSpots(List<Transaction> transactions) {
+    public Map<String, Long> mapOfParkingSpots(List<Transaction> transactions) {
         return transactions.stream()
                 .map(transaction -> transaction.getParkingSpot())
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
     }
 
-    private Map<String, Long> mapOfStandardLevel(List<Transaction> transactions) {
+    public Map<String, Long> mapOfStandardLevel(List<Transaction> transactions) {
         return transactions.stream()
                 .map(transaction -> transaction.getStandardLevel())
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
@@ -101,7 +101,7 @@ public class CalculatePrice {
         return transaction.getPricePerM2().multiply(BigDecimal.ONE.add(BigDecimal.valueOf(duration).multiply(trend))).setScale(2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal trendPerDay(List<Transaction> listToCalculateTrend, int first, int last) {
+    public BigDecimal trendPerDay(List<Transaction> listToCalculateTrend, int first, int last) {
         long duration = DAYS.between(listToCalculateTrend.get(first).getTransactionDate(), listToCalculateTrend.get(last).getTransactionDate());
         if (duration < 1) {
             duration = 1;
@@ -239,9 +239,8 @@ public class CalculatePrice {
         return StandardLevel.fromString(transToCheck.getStandardLevel()).compareTo(bestStandard) >= 0;
     }
 
-    private boolean isBestParkingPlace(List<Transaction> finallySortedList, Transaction transToCheck) {
+    public boolean isBestParkingPlace(List<Transaction> finallySortedList, Transaction transToCheck) {
         ParkingPlace bestParking = finallySortedList.stream()
-                .limit(finallySortedList.size() - 1)
                 .map(x -> ParkingPlace.fromString(x.getParkingSpot()))
                 .distinct()
                 .max(new ParkingPlaceComparator())
@@ -249,7 +248,7 @@ public class CalculatePrice {
         return ParkingPlace.fromString(transToCheck.getParkingSpot()).compareTo(bestParking) >= 0;
     }
 
-    private String getTabs(int numberOfTabs){
+    public String getTabs(int numberOfTabs){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numberOfTabs; i++) {
             sb.append("\t");

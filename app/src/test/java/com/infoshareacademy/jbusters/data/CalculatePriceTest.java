@@ -4,19 +4,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 class CalculatePriceTest {
 
     private static final double TREND_PER_YEAR = 0.002;
+    private static final double MAX_TREND_RATE_PER_DAY = 0.000274;
+    private static final double MIN_TREND_RATE_PER_DAY = -0.000274;
     private CalculatePrice testObj = new CalculatePrice();
 
     // updatePrice
@@ -382,5 +387,288 @@ class CalculatePriceTest {
         // then
 
         assertThat(result).isFalse();
+    }
+
+    // isBestParkingPlace
+
+    @Test
+    public void isBestParkingPlace_shouldReturnTrueWhen_parkingPlaceIsBetterThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.GARAZ.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestParkingPlace_shouldReturnTrueWhen_parkingPlaceIsSameAsBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    public void isBestParkingPlace_shouldReturnFalseWhen_parkingPlaceIsWorseThanBestInList() {
+
+        //given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction firstOption = new Transaction();
+        Transaction secondOption = new Transaction();
+        Transaction transToCheck = new Transaction();
+        firstOption.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        secondOption.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transToCheck.setParkingSpot(ParkingPlace.MIEJSCE_NAZIEMNE.getName());
+
+        transactions.add(firstOption);
+        transactions.add(secondOption);
+
+        // when
+
+        boolean result = testObj.isBestParkingPlace(transactions, transToCheck);
+
+        // then
+
+        assertThat(result).isFalse();
+    }
+
+    // getTabs
+
+    @Test
+    public void getTabsTest() {
+
+        // given
+
+        int i0 = 0;
+        int i1 = 1;
+        int i3 = 3;
+
+        // when
+
+        String result1 = testObj.getTabs(i0);
+        String result2 = testObj.getTabs(i1);
+        String result3 = testObj.getTabs(i3);
+
+        // then
+        assertThat(result1).isEqualTo("");
+        assertThat(result2).isEqualTo("\t");
+        assertThat(result3).isEqualTo("\t\t\t");
+    }
+
+    // trendPerDay
+
+    @Test
+    public void trendPerDay() {
+
+        // given
+
+        LocalDate date = LocalDate.of(2018, 6, 1);
+
+        List<Transaction> transactions = new ArrayList<>();
+        Transaction transOne = new Transaction();
+        transOne.setTransactionDate(date);
+        transOne.setPricePerM2(BigDecimal.valueOf(5000));
+
+        Transaction transTwo = new Transaction();
+        transTwo.setTransactionDate(date.plusDays(365));
+        transTwo.setPricePerM2(BigDecimal.valueOf(5250));
+
+        Transaction transThree = new Transaction();
+        transThree.setTransactionDate(date.plusDays(365));
+        transThree.setPricePerM2(BigDecimal.valueOf(6000));
+
+        Transaction transFour = new Transaction();
+        transFour.setTransactionDate(date.plusDays(365));
+        transFour.setPricePerM2(BigDecimal.valueOf(4000));
+
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+
+        BigDecimal resultOne = testObj.trendPerDay(transactions, 0, 1);
+        BigDecimal resultTwo = testObj.trendPerDay(transactions, 0, 2);
+        BigDecimal resultThree = testObj.trendPerDay(transactions, 0, 3);
+        BigDecimal resultFour = testObj.trendPerDay(transactions, 0, 0);
+
+        // then
+
+        assertThat(resultOne).isEqualTo(BigDecimal.valueOf(0.000136986).setScale(6, RoundingMode.HALF_UP));
+        assertThat(resultTwo).isEqualTo(BigDecimal.valueOf(MAX_TREND_RATE_PER_DAY));
+        assertThat(resultThree).isEqualTo(BigDecimal.valueOf(MIN_TREND_RATE_PER_DAY));
+        assertThat(resultFour).isEqualTo(BigDecimal.valueOf(0.000000).setScale(6, RoundingMode.HALF_UP));
+    }
+
+    // mapOfParkingSpots
+
+    @Test
+    public void mapOfParkingSpots() {
+
+        // given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction transOne = new Transaction();
+        transOne.setParkingSpot(ParkingPlace.GARAZ.getName());
+        Transaction transTwo = new Transaction();
+        transTwo.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        Transaction transThree = new Transaction();
+        transThree.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        Transaction transFour = new Transaction();
+        transFour.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+        Map<String, Long> result = testObj.mapOfParkingSpots(transactions);
+
+        // then
+
+        assertThat(result).hasSize(3);
+        assertThat(result).contains(entry("GARAŻ JEDNOSTANOWISKOWY", 1L),
+                entry("BRAK MP", 1L), entry("MIEJSCE POSTOJOWE W HALI GARAŻOWEJ", 2L));
+    }
+
+    // mapOfStandardLevel
+
+    @Test
+    public void mapOfStandardLevel() {
+
+        // given
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction transOne = new Transaction();
+        transOne.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transTwo = new Transaction();
+        transTwo.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transThree = new Transaction();
+        transThree.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transFour = new Transaction();
+        transFour.setStandardLevel(StandardLevel.PRZECIETNY.getName());
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+
+        Map<String, Long> result = testObj.mapOfStandardLevel(transactions);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).contains(entry("DOBRY", 3L), entry("PRZECIĘTNY", 1L));
+    }
+
+    // getListToCalculateTrend
+
+    @Test
+    public void getListToCalculateTrend() {
+        // given
+        List<Transaction> transactions = new ArrayList<>();
+
+        LocalDate date = LocalDate.of(2018, 6, 1);
+
+
+        Transaction transOne = new Transaction();
+        transOne.setStandardLevel(StandardLevel.DOBRY.getName());
+        transOne.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transOne.setLevel(2);
+        transOne.setTransactionDate(date);
+        Transaction transTwo = new Transaction();
+        transTwo.setStandardLevel(StandardLevel.DOBRY.getName());
+        transTwo.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transTwo.setLevel(2);
+        transTwo.setTransactionDate(date);
+        Transaction transThree = new Transaction();
+        transThree.setStandardLevel(StandardLevel.DOBRY.getName());
+        transThree.setParkingSpot(ParkingPlace.GARAZ.getName());
+        transThree.setLevel(1);
+        transThree.setTransactionDate(date);
+        Transaction transFour = new Transaction();
+        transFour.setStandardLevel(StandardLevel.PRZECIETNY.getName());
+        transFour.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        transFour.setLevel(3);
+        transFour.setTransactionDate(date);
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+        List<Transaction> result = testObj.getListToCalculateTrend(transactions);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).containsOnly(transOne, transTwo);
+    }
+
+    // overallTrend
+
+    @Test
+    public void overallTrend() {
+        // given
+        CalculatePrice test = Mockito.spy(new CalculatePrice());
+
+        BigDecimal trendOne = BigDecimal.valueOf(0.4);
+        BigDecimal trendTwo = BigDecimal.valueOf(0.6);
+        BigDecimal trendThree = BigDecimal.valueOf(0.2);
+
+        doReturn(new ArrayList<Transaction>()).when(test).getListToCalculateTrend(anyListOf(Transaction.class));
+        doReturn(trendOne).when(test).trendPerDay(anyListOf(Transaction.class),eq(0) , anyInt());
+        doReturn(trendTwo).when(test).trendPerDay(anyListOf(Transaction.class), eq(1), anyInt());
+        doReturn(trendThree).when(test).trendPerDay(anyListOf(Transaction.class), eq(2), anyInt());
+
+        // when
+
+        BigDecimal result = test.overallTrend(anyListOf(Transaction.class));
+
+        // then
+
+        assertThat(result).isEqualTo(BigDecimal.valueOf(0.4).setScale(6, RoundingMode.HALF_UP));
     }
 }
