@@ -9,8 +9,10 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -534,5 +536,69 @@ class CalculatePriceTest {
         assertThat(resultTwo).isEqualTo(BigDecimal.valueOf(MAX_TREND_RATE_PER_DAY));
         assertThat(resultThree).isEqualTo(BigDecimal.valueOf(MIN_TREND_RATE_PER_DAY));
         assertThat(resultFour).isEqualTo(BigDecimal.valueOf(0.000000).setScale(6, RoundingMode.HALF_UP));
+    }
+
+    // mapOfParkingSpots
+
+    @Test
+    public void mapOfParkingSpots() {
+
+        // given
+
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction transOne = new Transaction();
+        transOne.setParkingSpot(ParkingPlace.GARAZ.getName());
+        Transaction transTwo = new Transaction();
+        transTwo.setParkingSpot(ParkingPlace.BRAK_MP.getName());
+        Transaction transThree = new Transaction();
+        transThree.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+        Transaction transFour = new Transaction();
+        transFour.setParkingSpot(ParkingPlace.MIEJSCE_HALA.getName());
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+        Map<String, Long> result = testObj.mapOfParkingSpots(transactions);
+
+        // then
+
+        assertThat(result).hasSize(3);
+        assertThat(result).contains(entry("GARAŻ JEDNOSTANOWISKOWY", 1L),
+                entry("BRAK MP", 1L), entry("MIEJSCE POSTOJOWE W HALI GARAŻOWEJ", 2L));
+    }
+
+    // mapOfStandardLevel
+
+    @Test
+    public void mapOfStandardLevel() {
+
+        // given
+        List<Transaction> transactions = new ArrayList<>();
+
+        Transaction transOne = new Transaction();
+        transOne.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transTwo = new Transaction();
+        transTwo.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transThree = new Transaction();
+        transThree.setStandardLevel(StandardLevel.DOBRY.getName());
+        Transaction transFour = new Transaction();
+        transFour.setStandardLevel(StandardLevel.PRZECIETNY.getName());
+
+        transactions.add(transOne);
+        transactions.add(transTwo);
+        transactions.add(transThree);
+        transactions.add(transFour);
+
+        // when
+
+        Map<String, Long> result = testObj.mapOfStandardLevel(transactions);
+
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result).contains(entry("DOBRY", 3L), entry("PRZECIĘTNY", 1L));
     }
 }

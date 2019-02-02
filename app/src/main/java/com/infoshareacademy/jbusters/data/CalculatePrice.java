@@ -83,13 +83,13 @@ public class CalculatePrice {
                 .collect(Collectors.toList());
     }
 
-    private Map<String, Long> mapOfParkingSpots(List<Transaction> transactions) {
+    public Map<String, Long> mapOfParkingSpots(List<Transaction> transactions) {
         return transactions.stream()
                 .map(transaction -> transaction.getParkingSpot())
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
     }
 
-    private Map<String, Long> mapOfStandardLevel(List<Transaction> transactions) {
+    public Map<String, Long> mapOfStandardLevel(List<Transaction> transactions) {
         return transactions.stream()
                 .map(transaction -> transaction.getStandardLevel())
                 .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
