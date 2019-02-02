@@ -8,6 +8,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -79,11 +80,11 @@ public class DataLoader {
 
             // convert String to BigDecimal
             String price = listTransaction.get(INDEX_PRICE);
-            newRowOfTransactionList.setPrice(new BigDecimal(price).setScale(decimalPlaces, BigDecimal.ROUND_UP));
+            newRowOfTransactionList.setPrice(new BigDecimal(price).setScale(decimalPlaces, RoundingMode.HALF_UP));
             String flatArea = listTransaction.get(INDEX_FLAT_AREA);
-            newRowOfTransactionList.setFlatArea(new BigDecimal(flatArea).setScale(decimalPlaces, BigDecimal.ROUND_UP));
+            newRowOfTransactionList.setFlatArea(new BigDecimal(flatArea).setScale(decimalPlaces, RoundingMode.HALF_UP));
             String pricePerM2 = listTransaction.get(INDEX_PRICE_PER_M2);
-            newRowOfTransactionList.setPricePerM2(new BigDecimal(pricePerM2).setScale(decimalPlaces, BigDecimal.ROUND_UP));
+            newRowOfTransactionList.setPricePerM2(new BigDecimal(pricePerM2).setScale(decimalPlaces, RoundingMode.HALF_UP));
 
             //convert String to int
             String levelString = listTransaction.get(INDEX_LEVEL);
