@@ -55,7 +55,6 @@ public class DataLoader {
     public List<Transaction> createTransactionList(List<String> listFileTransakcjeCSV, boolean userFile) {
 
 
-
         List<Transaction> listOfTransaction = new ArrayList<>();
 
         for (String rowList : listFileTransakcjeCSV) {
@@ -64,13 +63,13 @@ public class DataLoader {
 
             Transaction newRowOfTransactionList = new Transaction();
 
-            newRowOfTransactionList.setCity(listTransaction.get(INDEX_CITY));
+            newRowOfTransactionList.setCity(listTransaction.get(INDEX_CITY).trim());
             newRowOfTransactionList.setDistrict(listTransaction.get(INDEX_DISTRICT).trim());
-            newRowOfTransactionList.setStreet(listTransaction.get(INDEX_STREET));
-            newRowOfTransactionList.setTypeOfMarket(listTransaction.get(INDEX_TYPE_OF_MARKET));
-            newRowOfTransactionList.setParkingSpot(listTransaction.get(INDEX_PARKING_SPOT));
-            newRowOfTransactionList.setStandardLevel(listTransaction.get(INDEX_STANDARD_LEVEL));
-            newRowOfTransactionList.setConstructionYear(listTransaction.get(INDEX_CONSTRUCTION_YEAR));
+            newRowOfTransactionList.setStreet(listTransaction.get(INDEX_STREET).trim());
+            newRowOfTransactionList.setTypeOfMarket(listTransaction.get(INDEX_TYPE_OF_MARKET).trim());
+            newRowOfTransactionList.setParkingSpot(listTransaction.get(INDEX_PARKING_SPOT).trim());
+            newRowOfTransactionList.setStandardLevel(listTransaction.get(INDEX_STANDARD_LEVEL).trim());
+            newRowOfTransactionList.setConstructionYear(listTransaction.get(INDEX_CONSTRUCTION_YEAR).trim());
 
             // convert String to LocalData
             String transactionDateString = listTransaction.get(INDEX_TRANSACTION_DATE).replaceAll("\uFEFF", "");
@@ -79,25 +78,25 @@ public class DataLoader {
             newRowOfTransactionList.setTransactionDate(transactionDate);
 
             // convert String to BigDecimal
-            String price = listTransaction.get(INDEX_PRICE);
-            newRowOfTransactionList.setPrice(new BigDecimal(price).setScale(decimalPlaces, RoundingMode.HALF_UP));
+            String price = listTransaction.get(INDEX_PRICE).trim();
+            newRowOfTransactionList.setPrice(new BigDecimal(price.trim()).setScale(decimalPlaces, RoundingMode.HALF_UP));
             String flatArea = listTransaction.get(INDEX_FLAT_AREA);
-            newRowOfTransactionList.setFlatArea(new BigDecimal(flatArea).setScale(decimalPlaces, RoundingMode.HALF_UP));
+            newRowOfTransactionList.setFlatArea(new BigDecimal(flatArea.trim()).setScale(decimalPlaces, RoundingMode.HALF_UP));
             String pricePerM2 = listTransaction.get(INDEX_PRICE_PER_M2);
-            newRowOfTransactionList.setPricePerM2(new BigDecimal(pricePerM2).setScale(decimalPlaces, RoundingMode.HALF_UP));
+            newRowOfTransactionList.setPricePerM2(new BigDecimal(pricePerM2.trim()).setScale(decimalPlaces, RoundingMode.HALF_UP));
 
             //convert String to int
             String levelString = listTransaction.get(INDEX_LEVEL);
-            int level = Integer.valueOf(levelString);
+            int level = Integer.valueOf(levelString.trim());
             newRowOfTransactionList.setLevel(level);
 
             String constructionYearCategoryString = listTransaction.get(INDEX_CONSTRUCTION_YEAR_CATEGORY);
-            int constructionYearCategory = Integer.valueOf(constructionYearCategoryString);
+            int constructionYearCategory = Integer.valueOf(constructionYearCategoryString.trim());
             newRowOfTransactionList.setConstructionYearCategory(constructionYearCategory);
 
             if (userFile) {
-                newRowOfTransactionList.setTransactionName(listTransaction.get(INDEX_TRANSACTION_NAME));
-                newRowOfTransactionList.setImportant(Boolean.valueOf(listTransaction.get(INDEX_IMPORTANT)));
+                newRowOfTransactionList.setTransactionName(listTransaction.get(INDEX_TRANSACTION_NAME).trim());
+                newRowOfTransactionList.setImportant(Boolean.valueOf(listTransaction.get(INDEX_IMPORTANT).trim()));
             }
 
             listOfTransaction.add(newRowOfTransactionList);
@@ -105,5 +104,4 @@ public class DataLoader {
         LOGGER.info("Create list transaction. List size: {}", listOfTransaction.size() + " rows");
         return listOfTransaction;
     }
-
 }
