@@ -26,19 +26,19 @@ public class CalculatePrice {
     private String currency;
 
 
-
     @Inject
-    StaticFields staticFields;
+    private StaticFields staticFields;
 
     public CalculatePrice() {
 
     }
 
     @PostConstruct
-    public void init(){
+    public void init() {
         currency = staticFields.getCurrency();
         exchangeRate = staticFields.getExchangeRate();
     }
+
     private ExchangeRatesManager exchangeRatesManager = new ExchangeRatesManager();
     private static final double MAX_TREND_RATE_PER_DAY = 0.000274;
     private static final double MIN_TREND_RATE_PER_DAY = -0.000274;
@@ -107,7 +107,7 @@ public class CalculatePrice {
             duration = 1;
         }
 
-        LOGGER.info("{} day/days have passed between transactions used to calculate price change trend:\t",duration);
+        LOGGER.info("{} day/days have passed between transactions used to calculate price change trend:\t", duration);
         BigDecimal priceOfNewest = listToCalculateTrend.get(last).getPricePerM2();
         BigDecimal priceOfOldest = listToCalculateTrend.get(first).getPricePerM2();
 
@@ -141,15 +141,15 @@ public class CalculatePrice {
 
         BigDecimal max = getMaxPriceInList(transactions);
 
-        String currencySuffix = currency +" per m2";
-        LOGGER.info("Average price calculated from similar flats set equals:"+getTabs(3)
+        String currencySuffix = currency + " per m2";
+        LOGGER.info("Average price calculated from similar flats set equals:" + getTabs(3)
                 + staticFields.formatWithLongDF(
-                        average.setScale(2, RoundingMode.HALF_UP).divide(exchangeRate, BigDecimal.ROUND_UP))
+                average.setScale(2, RoundingMode.HALF_UP).divide(exchangeRate, BigDecimal.ROUND_UP))
                 + " " + currencySuffix);
-        LOGGER.info("Maximum prise in similar flats set equals:"+getTabs(3)
+        LOGGER.info("Maximum prise in similar flats set equals:" + getTabs(3)
                 + staticFields.formatWithLongDF(max.divide(exchangeRate, BigDecimal.ROUND_UP))
                 + " " + currencySuffix);
-        System.out.println("Minimum prise in similar flats set equals:"+getTabs(4)
+        System.out.println("Minimum prise in similar flats set equals:" + getTabs(4)
                 + staticFields.formatWithLongDF(min.divide(exchangeRate, BigDecimal.ROUND_UP))
                 + " " + currencySuffix);
 
@@ -191,12 +191,12 @@ public class CalculatePrice {
 
         BigDecimal finalWeight = weightOne.add(weightTwo).add(weightThree).add(weightFour);
 
-        LOGGER.info("Flat's wage coefficient equals:"+getTabs(3) + finalWeight);
+        LOGGER.info("Flat's wage coefficient equals:" + getTabs(3) + finalWeight);
 
         BigDecimal pricePerM2 = average.multiply(finalWeight);
-        LOGGER.info("Calculated price per square meter equals:"+getTabs(5)
+        LOGGER.info("Calculated price per square meter equals:" + getTabs(5)
                 + staticFields.formatWithLongDF(
-                        pricePerM2.setScale(2, RoundingMode.HALF_UP).divide(exchangeRate, BigDecimal.ROUND_UP))
+                pricePerM2.setScale(2, RoundingMode.HALF_UP).divide(exchangeRate, BigDecimal.ROUND_UP))
                 + " " + currency);
 
         return pricePerM2.divide(exchangeRatesManager.getExRate(), 2, RoundingMode.HALF_UP);
@@ -248,7 +248,7 @@ public class CalculatePrice {
         return ParkingPlace.fromString(transToCheck.getParkingSpot()).compareTo(bestParking) >= 0;
     }
 
-    public String getTabs(int numberOfTabs){
+    public String getTabs(int numberOfTabs) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numberOfTabs; i++) {
             sb.append("\t");
