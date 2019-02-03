@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.Stateless;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 @Stateless
@@ -33,7 +32,7 @@ public class DistrWagesHandler {
         DistrictWage userDistrictWage = districtWageDao.findByName(cityUser,districtUser);
         DistrictWage checkedDistrictWage = districtWageDao.findByName(cityChecked,districtChecked);
 
-        if(userDistrictWage==(new DistrictWage())){
+        if(!userDistrictWage.getClass().equals( DistrictWage.class)){
             LOGGER.warn(userDistrictWage +" <--- ta dzielnica nie znajduje sie w bazie");
             return false;
         }
